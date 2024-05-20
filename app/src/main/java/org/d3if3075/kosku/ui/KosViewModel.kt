@@ -33,6 +33,7 @@ class KosViewModel(private val repository: KosRepository) : ViewModel() {
     fun edit(kos: Kos) {
         viewModelScope.launch {
             repository.edit(kos)
+            getAllKos()
         }
     }
 

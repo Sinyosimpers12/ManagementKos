@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val LightColorPalette = lightColorScheme(
-    primary = Color.Blue,
+    primary = Color.White,
     primaryContainer = Color.DarkGray,
-    secondary = Color.White)
+    secondary = Color.Black)
 
 @Composable
 fun KosKuTheme(content: @Composable () -> Unit) {

@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -14,13 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.d3if3075.kosku.database.KosDao
 import org.d3if3075.kosku.database.KosDatabase
 import org.d3if3075.kosku.database.KosRepository
@@ -40,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         val kosDao: KosDao = KosDatabase.getDatabase(context).kosDao()
         val kosRepository = KosRepository(kosDao)
         val kosViewModel = KosViewModel(kosRepository)
+
 
         kosViewModel.getAllKos()
 
@@ -61,7 +55,12 @@ fun KosKuApp(
     navigateToAturActivity: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) } // State untuk menampilkan dialog
+    var showDialog1 by remember { mutableStateOf(false) }
+    var showDialog3 by remember { mutableStateOf(false) }
     val kosList by kosViewModel.kosList.collectAsState()
+    var selectedKos by remember { mutableStateOf<Kos?>(null) }
+    var editCompleted by remember { mutableStateOf(false) }
+
 
     KosKuTheme {
         Scaffold(
@@ -69,12 +68,11 @@ fun KosKuApp(
                 TopAppBar(
                     title = { Text(text = "GoKos")},
                     navigationIcon = {
-                        IconButton(onClick = {  }) {
+                        IconButton(onClick = { showDialog3 = true }) {
                             Icon(Icons.Default.Home, contentDescription = "Back")
                         }
                     },
                     actions = {
-                        // Add a button to navigate to org.d3if3075.kosku.ui.AturActivity
                         IconButton(onClick = navigateToAturActivity) {
                             Icon(Icons.Default.Settings, contentDescription = "Settings")
                         }
@@ -84,7 +82,9 @@ fun KosKuApp(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showDialog = true }, // Menampilkan dialog saat tombol ditekan
-                    content = { Text(text = "+") }
+                    content = {
+                        Text(text = "+")
+                    }
                 )
             }
 
@@ -103,7 +103,16 @@ fun KosKuApp(
                         modifier = Modifier.padding(16.dp)
                     )
                 } else {
-                    KosList(kosList = kosList)
+                    KosList(
+                        kosList = kosList,
+                        onDeleteClick = { kos ->
+                            kosViewModel.deleteKos(kos)
+                        },
+                        onEditClick = { kos ->
+                            selectedKos = kos
+                            showDialog1 = true
+                        }
+                    )
                 }
             }
         }
@@ -116,76 +125,22 @@ fun KosKuApp(
             onCloseDialog = { showDialog = false }
         )
     }
-}
-
-@Composable
-fun AddKosDialog(
-    kosViewModel: KosViewModel,
-    onCloseDialog: () -> Unit
-) {
-
-    var roomNumber by remember { mutableStateOf("") }
-    var tenantName by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
-
-    val saveKos: () -> Unit = {
-        if (roomNumber.isNotBlank() && tenantName.isNotBlank()) {
-            kosViewModel.viewModelScope.launch {
-                val isRoomNumberExists = kosViewModel.isRoomNumberExists(roomNumber)
-                if (!isRoomNumberExists) {
-                    val newKos = Kos(roomNumber = roomNumber, tenantName = tenantName)
-                    kosViewModel.insertKos(newKos)
-                    onCloseDialog()
-                } else {
-                    errorMessage = "Nomor kamar sudah terdaftar. Harap masukkan nomor kamar lain."
+    if (showDialog1) {
+        selectedKos?.let { kos ->
+            AddKosDialog2(
+                kosViewModel = kosViewModel,
+                kos = kos,
+                onCloseDialog = {
+                    showDialog1 = false
+                    editCompleted = true
                 }
-            }
-        } else {
-            errorMessage = "Nomor kamar dan nama penghuni harus diisi."
+            )
         }
     }
+    if (showDialog3) {
+        AddKosDialogGuide(
+            onCloseDialog = { showDialog3 = false }
+        )
+    }
 
-    AlertDialog(
-        onDismissRequest = onCloseDialog,
-        title = { Text(text = "Tambah Data Kos") },
-        text = {
-            // Menggunakan Column untuk mengelompokkan kedua TextField
-            Column {
-                TextField(
-                    value = roomNumber,
-                    onValueChange = { roomNumber = it },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    label = { Text("Nomor Kamar") }
-                )
-                TextField(
-                    value = tenantName,
-                    onValueChange = { tenantName = it },
-                    label = { Text("Nama Penghuni") }
-                )
-                if (errorMessage.isNotBlank()) {
-                    Text(
-                        text = errorMessage,
-                        color = Color.Red,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = saveKos
-            ) {
-                Text(text = "Simpan")
-            }
-        },
-        dismissButton = {
-            Button(
-                onClick = onCloseDialog
-            ) {
-                Text(text = "Batal")
-            }
-        }
-    )
 }
-
-

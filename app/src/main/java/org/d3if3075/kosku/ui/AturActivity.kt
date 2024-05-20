@@ -3,6 +3,7 @@ package org.d3if3075.kosku.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
@@ -151,6 +152,7 @@ fun KosItem1(
     onDeleteClick: (Kos) -> Unit,
     onEditClick: (Kos) -> Unit
 ) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -175,6 +177,13 @@ fun KosItem1(
             }
 
             // Delete Button
+            Button(
+                onClick = { Toast.makeText(context, "Dalam Proses Bersama -Mas Fuad", Toast.LENGTH_SHORT).show() },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(Color.LightGray)
+            ) {
+                Text(text = "Detail")
+            }
             Button(
                 onClick = { onDeleteClick(kos) },
                 modifier = Modifier.fillMaxWidth(),
