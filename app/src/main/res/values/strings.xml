@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Management Kosku</string>
+    <string name="app_name">Kosku</string>
+    <string name="tambah_catatan">Tambah Penghuni</string>
+    <string name="kembali">Kembali</string>
+    <string name="edit_catatan">Edit Penghuni</string>
+    <string name="invalid">Invalid Mohon Masukan Yang Tepat</string>
+    <string name="list_kosong">Belum Ada Data</string>
+    <string name="simpan">Simpan</string>
+    <string name="lainnya">Lainya</string>
+    <string name="hapus">Hapus</string>
+    <string name="judul">"Nama Penghuni "</string>
+    <string name="isi_catatan">Catatan</string>
+    <string name="nomor_kamar">Nomor Kamar</string>
 </resources>
