@@ -11,4 +11,6 @@
     <string name="judul">"Nama Penghuni "</string>
     <string name="isi_catatan">Catatan</string>
     <string name="nomor_kamar">Nomor Kamar</string>
+    <string name="list">listdalamgrid\n</string>
+    <string name="grid">grid\n</string>
 </resources>

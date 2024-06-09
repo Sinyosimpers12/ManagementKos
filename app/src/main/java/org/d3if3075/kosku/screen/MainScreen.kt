@@ -1,6 +1,7 @@
 package org.d3if3075.kosku.screen
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -38,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,21 +65,34 @@ import org.d3if3075.kosku.util.ViewModelFactory
 @Composable
 fun MainScreen(navController: NavHostController) {
     var showDialog3 by remember { mutableStateOf(false) }
+    var showList by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "GoKos")},
+                title = { Text(text = "GoKos") },
                 navigationIcon = {
                     IconButton(onClick = { showDialog3 = true }) {
                         Icon(Icons.Default.Home, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showList = !showList }) {
+                        Icon(
+                            painter = painterResource(
+                                if (showList) R.drawable.baseline_grid_view_24
+                                else R.drawable.baseline_view_list_24
+                            ),
+                            contentDescription = stringResource(
+                                if (showList) R.string.grid
+                                else R.string.list
+                            ),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     IconButton(onClick = {
                         navController.navigate(Screen.Lihat.route)
-                    } ) {
-
+                    }) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
                 }
@@ -94,7 +112,7 @@ fun MainScreen(navController: NavHostController) {
             }
         }
     ) { padding ->
-        ScreenContent(Modifier.padding(padding), navController)
+        ScreenContent(showList, Modifier.padding(padding), navController)
     }
     if (showDialog3) {
         AddKosDialogGuide(
@@ -104,7 +122,7 @@ fun MainScreen(navController: NavHostController) {
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier, navController: NavHostController) {
+fun ScreenContent(showList: Boolean, modifier: Modifier, navController: NavHostController) {
     val context = LocalContext.current
     val db = CatatanDb.getInstance(context)
     val factory = ViewModelFactory(db.dao)
@@ -121,15 +139,31 @@ fun ScreenContent(modifier: Modifier, navController: NavHostController) {
             Text(text = stringResource(id = R.string.list_kosong))
         }
     } else {
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 84.dp)
-        ) {
-            items(data) {
-                ListItem(catatan = it) {
-                    navController.navigate(Screen.FormUbah.withId(it.id))
+        if (showList) {
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 84.dp)
+            ) {
+                items(data) {
+                    ListItem(catatan = it) {
+                        navController.navigate(Screen.FormUbah.withId(it.id))
+                    }
                 }
-                Divider()
+            }
+        }
+        else {
+            LazyVerticalStaggeredGrid(
+                modifier = modifier.fillMaxSize(),
+                columns = StaggeredGridCells.Fixed(2),
+                verticalItemSpacing = 8.dp,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 84.dp)
+            ) {
+                items(data) {
+                    GridItem(catatan = it) {
+                        navController.navigate(Screen.FormUbah.withId(it.id))
+                    }
+                }
             }
         }
     }
@@ -144,8 +178,7 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp), // tambahkan bayangan kartu
-        // ubah warna latar belakang
+            defaultElevation = 10.dp),
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -155,10 +188,10 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp, // ubah ukuran teks
-                color = Color.Black // ubah warna teks
+                fontSize = 16.sp,
+                color = Color.Black
             )
-            Spacer(modifier = Modifier.height(4.dp)) // tambahkan ruang antara teks
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Nomor Kamar: ${catatan.nomorkamar}",
                 maxLines = 1,
@@ -173,18 +206,57 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 14.sp,
-                color = Color.DarkGray // ubah warna teks catatan
+                color = Color.DarkGray
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Tanggal Masuk: ${catatan.tanggal}",
                 fontSize = 12.sp,
-                color = Color.Gray // ubah warna teks tanggal
+                color = Color.Gray
             )
         }
     }
 }
-
+@Composable
+fun GridItem(catatan: Catatan, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, Color.Gray)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = catatan.judul,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = catatan.nomorkamar.toString(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = catatan.catatan,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = catatan.tanggal,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
