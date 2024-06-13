@@ -64,7 +64,7 @@ fun AddKosDialogGuide(onCloseDialog: () -> Unit) {
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
-                text = "Copyright amba- ®©  Martin, Samuel, Fuad",
+                text = "Copyright ®©  Martin, Samuel, Fuad",
                 modifier = Modifier.padding(bottom = 4.dp)
             )
             Button(

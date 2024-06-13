@@ -10,6 +10,7 @@ import org.d3if3075.kosku.model.Catatan
 
 class MainViewModel(dao: CatatanDao) : ViewModel() {
 
+
     val data: StateFlow<List<Catatan>> = dao.getCatatan().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),

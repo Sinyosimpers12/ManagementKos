@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -59,6 +58,10 @@ import org.d3if3075.kosku.util.AddKosDialogGuide
 import org.d3if3075.kosku.database.CatatanDb
 import org.d3if3075.kosku.model.Catatan
 import org.d3if3075.kosku.util.ViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,14 +222,20 @@ fun ListItem(catatan: Catatan, onClick: () -> Unit) {
 }
 @Composable
 fun GridItem(catatan: Catatan, onClick: () -> Unit) {
+    val currentDate = Calendar.getInstance()
+    val tanggalKeluar = Calendar.getInstance().apply {
+        // Parse tanggal keluar dari format yang tersimpan dalam catatan
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        time = sdf.parse(catatan.tanggalKeluar) ?: Date()
+    }
+
+    val isTanggalKeluarExpired = tanggalKeluar.before(currentDate)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
-        border = BorderStroke(1.dp, Color.Gray)
+        border = BorderStroke(1.dp, if (isTanggalKeluarExpired) Color.Red else Color.Gray)
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -257,6 +266,7 @@ fun GridItem(catatan: Catatan, onClick: () -> Unit) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)

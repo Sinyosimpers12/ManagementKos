@@ -10,5 +10,8 @@ data class Catatan(
     val judul: String,
     val catatan: String,
     val nomorkamar: Int,
-    val tanggal: String
+    val tanggal: String,
+    val jenisKelamin: String,
+    val tanggalKeluar: String,
+    val isDeleted: Boolean = false
 )

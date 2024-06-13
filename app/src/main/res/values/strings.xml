@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kosku</string>
+    <string name="app_name">KosKu</string>
     <string name="tambah_catatan">Tambah Penghuni</string>
     <string name="kembali">Kembali</string>
     <string name="edit_catatan">Edit Penghuni</string>
@@ -11,6 +11,11 @@
     <string name="judul">"Nama Penghuni "</string>
     <string name="isi_catatan">Catatan</string>
     <string name="nomor_kamar">Nomor Kamar</string>
-    <string name="list">listdalamgrid\n</string>
+    <string name="list">list\n</string>
     <string name="grid">grid\n</string>
+    <string name="pilih_gambar">Pilih gambar\n</string>
+    <string name="tambah_foto">Tambah Bukti Pembayaran</string>
+    <string name="invalid_room_number">Kamar Sudah Terisi</string>
+    <string name="hurf">36---1</string>
+    <string name="tanggal_keluar">Tanggal Keluar</string>
 </resources>

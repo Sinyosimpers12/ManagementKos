@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-android:2.8.0")
+    implementation("com.google.firebase:protolite-well-known-types:18.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -76,8 +77,10 @@ dependencies {
         // Tampilan Semua amba
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
     implementation ("androidx.compose.foundation:foundation:1.0.0")
-
-
+        // untuk menyimoan (libary menghandle gambar amba dan rusdi serta sam)
+    implementation ("io.coil-kt:coil-compose:1.4.0")
+        // Spalsh Scren
+    implementation ("androidx.navigation:navigation-compose:2.5.3")
 
 
 }

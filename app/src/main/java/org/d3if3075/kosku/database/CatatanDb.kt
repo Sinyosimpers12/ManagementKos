@@ -5,8 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import org.d3if3075.kosku.model.Catatan
+import org.d3if3075.kosku.model.CatatanImage
 
-@Database(entities = [Catatan::class], version = 1, exportSchema = false)
+@Database(entities = [Catatan::class, CatatanImage::class], version = 1, exportSchema = false)
 abstract class CatatanDb : RoomDatabase() {
 
     abstract val dao: CatatanDao
